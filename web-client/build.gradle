@@ -8,7 +8,7 @@ plugins {
 
 group 'com.weather.web.client'
 version '1.0-SNAPSHOT'
-sourceCompatibility = '16'
+sourceCompatibility = '17'
 
 repositories {
     mavenCentral()
