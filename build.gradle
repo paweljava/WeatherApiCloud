@@ -9,7 +9,7 @@ plugins {
 
 group 'com.weather'
 version '1.0-SNAPSHOT'
-sourceCompatibility = '16'
+sourceCompatibility = '17'
 
 repositories {
     mavenCentral()
