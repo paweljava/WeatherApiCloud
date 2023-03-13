@@ -1,0 +1,1 @@
+web: java -jar app/build/libs/app-1.0-SNAPSHOT.jar --host=0.0.0.0 --port=$PORT

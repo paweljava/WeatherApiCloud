@@ -45,7 +45,7 @@ gradle build
 
 To run program after build:
 ```
-java -jar build/libs/WeatherServiceApi-0.0.1-SNAPSHOT.jar
+java -jar app/build/libs/app-1.0-SNAPSHOT.jar
 ```
 Or run them from the IDE.
 
