@@ -1,0 +1,4 @@
+rootProject.name = 'WeatherApiCloud'
+include 'app'
+include 'web-client'
+
