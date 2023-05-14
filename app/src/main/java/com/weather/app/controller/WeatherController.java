@@ -16,7 +16,7 @@ import static com.weather.web.client.common.ExceptionMessages.INCORRECT_DATE_FOR
 import static com.weather.web.client.utility.Checks.checkThat;
 
 @RestController
-public class WeatherController {
+class WeatherController {
     private final WeatherService weatherService;
 
     public WeatherController(WeatherService weatherService) {
@@ -26,7 +26,10 @@ public class WeatherController {
     @GetMapping("/weather/{date}")
     public List<ResponseWeatherDto> getWeatherData(@PathVariable("date") String date) {
         checkThat(validateDateFormat(date), INCORRECT_DATE_FORMAT_EXCEPTION_MESSAGE);
-        return mapListRequestDtoToListResponseDto(weatherService.getWeather(date));
+        final var response = mapListRequestDtoToListResponseDto(weatherService.getWeather(date));
+        weatherService.save(response);
+
+        return response;
     }
 
     private boolean validateDateFormat(String dateToValidate) {
@@ -55,10 +58,5 @@ public class WeatherController {
             throw new IllegalArgumentException("Invalid date format. Please use 'yyyy-MM-dd'");
         }
     }*/
-
-
-
-
-
 }
 

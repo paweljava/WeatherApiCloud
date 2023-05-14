@@ -1,3 +1,4 @@
+/*
 package com.weather.app.service;
 
 import com.weather.app.repository.CityRepository;
@@ -42,7 +43,7 @@ public class WeatherService2 {
 
         for (final var cityData : cityWeathers) {
             final var cityName = cityData.cityName();
-            for (final var weatherData : cityData.data()) {
+            for (final var weatherData : cityData.days()) {
                 if ((weatherData.forecastDate().equals(currentDate)) &&
                         (validateWeatherConditions(weatherData.averageTemp(), weatherData.windSpeed()))) {
                     final var newWeatherData = new Weather(
@@ -58,7 +59,7 @@ public class WeatherService2 {
             }
         }
         checkThat(dataList.size() > 0, CITY_NOT_FOUND_FOR_REQUESTED_WEATHER_CONDITIONS_EXCEPTION_MESSAGE);
-        dataList.sort(Comparator.comparingDouble(sort -> ((sort.data().get(0).windSpeed() + sort.data().get(0).windSpeed()) * 3)));
+        dataList.sort(Comparator.comparingDouble(sort -> ((sort.days().get(0).windSpeed() + sort.days().get(0).windSpeed()) * 3)));
 
 
         return dataList;
@@ -69,17 +70,18 @@ public class WeatherService2 {
         WeatherBitResponseDto response = null;
         double formulaValue = 0;
         for (final var cityData : cityWeathers) {
-            for (final var weather : cityData.data()) {
+            for (final var weather : cityData.days()) {
                 if (applyFormula(weather.averageTemp(), weather.windSpeed()) > formulaValue) {
                     formulaValue = (applyFormula(weather.averageTemp(), weather.windSpeed()));
-                    response = new WeatherBitResponseDto(cityData.cityName(), cityData.data());
+                    response = new WeatherBitResponseDto(cityData.cityName(), cityData.days());
                 }
             }
         }
         return response;
     }
 
-    /*public WeatherBitResponseDto getCityWeather(List<WeatherBitResponseDto> cityWeathers) {
+    */
+/*public WeatherBitResponseDto getCityWeather(List<WeatherBitResponseDto> cityWeathers) {
         WeatherBitResponseDto response = null;
         double formulaValue = 0;
         for (final var cityData : cityWeathers) {
@@ -91,24 +93,28 @@ public class WeatherService2 {
             }
         }
         return response;
-    }*/
+    }*//*
+
 
     private double applyFormula(double averageTemp, double windSpeed) {
         return (averageTemp + windSpeed) * 3;
     }
 }
-        /*var weathersListFilteredByDate = cityWeathers.stream()
+        */
+/*var weathersListFilteredByDate = cityWeathers.stream()
                 .map(a -> a.data().stream()
                         .filter(b -> b.forecastDate().equals(currentDate))
                         //.flatMap(list -> list.stream())
                         .collect(Collectors.toList()))
                 .flatMap(Collection::stream)
                 .toList();
-        return dataList;*/
+        return dataList;*//*
+
 
 
 //jak technicznie mam powiedziec co sie dzieje w linijkach
 
+*/
 /* dzialajacy stream
     cityWeathers.stream()
         .map(WeatherBitResponseDto::data)
@@ -130,3 +136,4 @@ public class WeatherService2 {
         System.out.println(dataList);
         checkThat(dataList.size() > 0, CITY_NOT_FOUND_FOR_REQUESTED_WEATHER_CONDITIONS_EXCEPTION_MESSAGE);
         return dataList;*/
+

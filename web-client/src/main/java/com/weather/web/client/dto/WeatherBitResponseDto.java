@@ -5,5 +5,5 @@ import com.weather.web.client.model.Weather;
 
 import java.util.List;
 
-public record WeatherBitResponseDto(@JsonProperty("city_name") String cityName, List<Weather> data) {
+public record WeatherBitResponseDto(@JsonProperty("address") String cityName, List<Weather> days) {
 }
