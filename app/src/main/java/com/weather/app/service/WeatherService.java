@@ -34,11 +34,11 @@ public class WeatherService {
         final var response = cityRepository.getCityList().stream().map(
                         city -> weatherClient.getForecastByCoordinates(city.getLat(), city.getLon()))
                 .collect(Collectors.toList());
-        return getCitiesWeathers(response, date);
+        return getCitiesWeathersLambda(response, date);
     }
 
     private List<WeatherBitResponseDto> getCitiesWeathers(List<WeatherBitResponseDto> cityWeathers, String currentDate) {
-        List<WeatherBitResponseDto> dataList = new ArrayList<WeatherBitResponseDto>();
+        List<WeatherBitResponseDto> dataList = new ArrayList<>();
 
         for (final var cityData : cityWeathers) {
             final var cityName = cityNameConversion(cityData.cityName());
@@ -64,13 +64,6 @@ public class WeatherService {
                         .average()
                         .orElse(0))
                 .reversed());
-        // nie dziala
-        /*dataList.sort(Comparator.comparingDouble(cityData ->
-                        cityData.days().stream()
-                                .mapToDouble(weather -> weather.averageTemp() + weather.windSpeed() * 3)
-                                .average()
-                                .orElse(0))
-                .reversed());*/
         return dataList;
     }
 
@@ -80,35 +73,39 @@ public class WeatherService {
                 .findFirst().get().getCityName();
     }
 
-    private double applyFormula(double averageTemp, double windSpeed) {
-        return averageTemp + windSpeed * 3;
-    }
-
     public List<ResponseWeatherDto> save(List<ResponseWeatherDto> response) {
         return response;
     }
-}
 
-//jak technicznie mam powiedziec co sie dzieje w linijkach
+    private List<WeatherBitResponseDto> getCitiesWeathersLambda(List<WeatherBitResponseDto> cityWeathers, String currentDate) {
+        List<WeatherBitResponseDto> dataList = new ArrayList<>();
 
-/* dzialajacy stream
-    cityWeathers.stream()
-        .map(WeatherBitResponseDto::data)
-        .flatMap(List::stream)
-        .filter(weatherData -> weatherData.forecastDate().equals(currentDate))
-        .forEach(weatherData -> {
-        String cityName = cityWeathers.stream()
-        .filter(cityWeather -> cityWeather.data().contains(weatherData))
-        .findFirst()
-        .map(WeatherBitResponseDto::cityName)
-        .orElse("");
-        List<Weather> weatherList = new ArrayList<>();
-        weatherList.add(new Weather(weatherData.forecastDate(), weatherData.averageTemp(), weatherData.windSpeed()));
-        WeatherBitResponseDto newCityData = new WeatherBitResponseDto(cityName, weatherList);
-        dataList.add(newCityData);
-        });
+        cityWeathers.stream()
+                .map(WeatherBitResponseDto::days)
+                .flatMap(List::stream)
+                .filter(weatherData -> weatherData.forecastDate().equals(currentDate))
+                .forEach(weatherData -> {
+                    var cityName = cityNameConversion(cityWeathers.stream()
+                            .filter(cityWeather -> cityWeather.days().contains(weatherData))
+                            .findFirst()
+                            .map(WeatherBitResponseDto::cityName)
+                            .orElse(""));
+                    List<Weather> weatherList = new ArrayList<>();
+                    weatherList.add(new Weather(
+                            weatherData.forecastDate(),
+                            weatherData.averageTemp(),
+                            weatherData.windSpeed()));
+                    var newCityData = new WeatherBitResponseDto(cityName, weatherList);
+                    dataList.add(newCityData);
+                });
 
-        System.out.println();
-        System.out.println(dataList);
         checkThat(dataList.size() > 0, CITY_NOT_FOUND_FOR_REQUESTED_WEATHER_CONDITIONS_EXCEPTION_MESSAGE);
-        return dataList;*/
+        dataList.sort(comparingDouble((WeatherBitResponseDto cityData) ->
+                cityData.days().stream()
+                        .mapToDouble(weather -> (weather.averageTemp() + weather.windSpeed() * 3))
+                        .average()
+                        .orElse(0))
+                .reversed());
+        return dataList;
+    }
+}
