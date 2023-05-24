@@ -3,7 +3,7 @@
 ## Assumptions:
 - Expose a REST API, where the argument is a day (yyyy-mm-dd date format)
   depending on which place offers best windsurfing conditions on that day in the 16 forecast day range
-  and return value is one of following locations: Jastarnia (Poland),
+  and return value is list of following locations: Jastarnia (Poland),
   Bridgetown (Barbados), Fortaleza (Brazil), Pissouri (Cyprus), Le Morne (Mauritius)
 - Apart from returning the name of the location,
   the response should also include weather conditions
@@ -26,13 +26,14 @@
 - Use Spring Boot
 - Use Java 8 or higher
 - Use Gradle or Maven
-- Use the Weatherbit Forecast API
+- Use H2 database
+- Use the Visual Crossing Forecast API
 - Has README file
 
 ##Key points:
 - Lombok - Please enable the annotation processing in your IDE
-- API https://www.weatherbit.io/api/weather-forecast-16-day
-- JUnit, Mockito for testing
+- API https://www.visualcrossing.com/weather-api
+- JUnit, Mockito, WireMock for testing
 - Gradle - build automation system
 - Spring 5
 - Java 16
@@ -60,24 +61,77 @@ After above execution, service will start at port 8080.
 
 ## Sample requests:
 
-Request:
+Example request:
 ```
 curl -X GET \
-  http://localhost:8080/weather/2022-11-20
+  http://localhost:8080/weather/2023-05-29
 ```
-Response:
+Example response:
 
 ```
 200 OK
 
-{
-    "cityName": "Fortaleza",
-    "weatherDtoList": [
-        {
-            "data": "2022-11-20",
-            "averageTemp": 27.2,
-            "windSpeed": 5.8
-        }
-    ]
-}
+[
+    {
+        "cityName": "Le Morne",
+        "weatherDtoList": [
+            {
+                "datetime": "2023-05-29",
+                "temp": 24.6,
+                "windspeed": 28.8
+            }
+        ]
+    },
+    {
+        "cityName": "Fortaleza",
+        "weatherDtoList": [
+            {
+                "datetime": "2023-05-29",
+                "temp": 26.9,
+                "windspeed": 23.8
+            }
+        ]
+    },
+    {
+        "cityName": "Bridgetown",
+        "weatherDtoList": [
+            {
+                "datetime": "2023-05-29",
+                "temp": 27.2,
+                "windspeed": 22.7
+            }
+        ]
+    },
+    {
+        "cityName": "Pissoúri",
+        "weatherDtoList": [
+            {
+                "datetime": "2023-05-29",
+                "temp": 21.2,
+                "windspeed": 21.6
+            }
+        ]
+    },
+    {
+        "cityName": "Jastarnia",
+        "weatherDtoList": [
+            {
+                "datetime": "2023-05-29",
+                "temp": 12.2,
+                "windspeed": 24.1
+            }
+        ]
+    }
+]
+```
+## Database H2 access
+
+H2 console available at '/console'
+JDBC URL: 'jdbc:h2:mem:test'
+User Name: sa
+No password / empty field
+
+```
+localy: http://localhost:8080/console
+remote: http://WebPageName/console
 ```
