@@ -127,11 +127,13 @@ Example response:
 ## Database H2 access
 
 H2 console available at '/console'
-JDBC URL: 'jdbc:h2:mem:test'
-User Name: sa
-No password / empty field
-
+Example access to console:
 ```
 localy: http://localhost:8080/console
 remote: http://WebPageName/console
+```
+```
+JDBC URL: 'jdbc:h2:mem:test'
+User Name: sa
+Password: No password / empty field
 ```
