@@ -1,6 +1,6 @@
 package com.weather.web.client;
 
-import com.weather.web.client.dto.WeatherBitResponseDto;
+import com.weather.web.client.model.VisualCrossingApiDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.RestTemplate;
@@ -16,13 +16,11 @@ public class WeatherClient {
     public static final String API_KEY = "E3BV74QMLJALSCLLLDEKW6UXS";
     private final RestTemplate restTemplate = new RestTemplate();
 
-    public WeatherBitResponseDto getForecastByCoordinates(double lat, double lon) {
+    public VisualCrossingApiDto getForecastByCoordinates(double lat, double lon) {
         final var response = callGetMethod(
-                "/VisualCrossingWebServices/rest/services/timeline/{lat},{lon}?key={API_KEY}&include=days&unitGroup=metric",
-                WeatherBitResponseDto.class, lat, lon, API_KEY);
+                "/VisualCrossingWebServices/rest/services/timeline/{lat},{lon}?key={API_KEY}&include=days&unitGroup=metric&",
+                VisualCrossingApiDto.class, lat, lon, API_KEY);
         checkThat(!response.days().isEmpty(), NO_RESPONSE_FROM_API_EXCEPTION_MESSAGE);
-        //logger.info(String.valueOf(response));
-        System.out.println("Wyniki loggera");
         log.info(String.valueOf(response));
         return response;
     }

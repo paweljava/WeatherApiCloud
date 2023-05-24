@@ -1,18 +1,18 @@
 package com.weather.app.controller;
 
-import com.weather.app.dto.ResponseWeatherDto;
+import com.weather.app.model.controller.WeatherControllerDto;
 import com.weather.app.service.WeatherService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
-import static com.weather.app.model.Mapper.mapListRequestDtoToListResponseDto;
-import static com.weather.web.client.common.ExceptionMessages.INCORRECT_DATE_FORMAT_EXCEPTION_MESSAGE;
+import static com.weather.app.model.Mapper.mapToWeatherControllerDto;
+import static com.weather.app.model.Mapper.mapToWeatherDbDto;
+import static com.weather.web.client.common.ExceptionMessages.INCORRECT_DATE_RANGE_EXCEPTION_MESSAGE;
 import static com.weather.web.client.utility.Checks.checkThat;
 
 @RestController
@@ -24,39 +24,18 @@ class WeatherController {
     }
 
     @GetMapping("/weather/{date}")
-    public List<ResponseWeatherDto> getWeatherData(@PathVariable("date") String date) {
-        checkThat(validateDateFormat(date), INCORRECT_DATE_FORMAT_EXCEPTION_MESSAGE);
-        final var response = mapListRequestDtoToListResponseDto(weatherService.getWeather(date));
-        weatherService.save(response);
+    public List<WeatherControllerDto> getWeatherData(@PathVariable("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        checkThat(validateDate(date), INCORRECT_DATE_RANGE_EXCEPTION_MESSAGE);
+        final var visualCrossingApiResponse = weatherService.getWeather(date);
+        final var responseToDb = mapToWeatherDbDto(visualCrossingApiResponse);
+        weatherService.save(responseToDb);
 
-        return response;
+        return mapToWeatherControllerDto(visualCrossingApiResponse);
     }
 
-    private boolean validateDateFormat(String dateToValidate) {
-        final var formatter = new SimpleDateFormat("yyyy-MM-dd");
-        formatter.setLenient(false);
-        final Date parsedData;
-        try {
-            parsedData = formatter.parse(dateToValidate);
-            System.out.println("Date format yyyy-MM-dd " + formatter.format(parsedData));
-            return true;
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return false;
-        }
+    private boolean validateDate(LocalDate date) {
+        final var today = LocalDate.now().minusDays(1);
+        final var date16DaysAhead = today.plusDays(16);
+        return date.isAfter(today) && date.isBefore(date16DaysAhead);
     }
-
-    /*private boolean validateDateFormat(String dateToValidate) {
-        try {
-            DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-            df.setLenient(false);
-            var formattedDate = df.format(dateToValidate);
-            var parsedDate = df.parse(formattedDate);
-
-            return formattedDate.equals(df.format(parsedDate));
-        } catch (ParseException e) {
-            throw new IllegalArgumentException("Invalid date format. Please use 'yyyy-MM-dd'");
-        }
-    }*/
 }
-
