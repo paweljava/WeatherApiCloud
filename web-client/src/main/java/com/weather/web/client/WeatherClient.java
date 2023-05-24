@@ -18,7 +18,7 @@ public class WeatherClient {
 
     public VisualCrossingApiDto getForecastByCoordinates(double lat, double lon) {
         final var response = callGetMethod(
-                "/VisualCrossingWebServices/rest/services/timeline/{lat},{lon}?key={API_KEY}&include=days&unitGroup=metric&",
+                "/VisualCrossingWebServices/rest/services/timeline/{lat},{lon}?key={API_KEY}&include=days&unitGroup=metric",
                 VisualCrossingApiDto.class, lat, lon, API_KEY);
         checkThat(!response.days().isEmpty(), NO_RESPONSE_FROM_API_EXCEPTION_MESSAGE);
         log.info(String.valueOf(response));

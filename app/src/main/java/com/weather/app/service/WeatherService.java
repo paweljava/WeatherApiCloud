@@ -44,7 +44,7 @@ public class WeatherService {
     }
 
     // not in use
-    public List<VisualCrossingApiDto> getCitiesWeathers(List<VisualCrossingApiDto> cityWeathers, LocalDate currentDate) {
+    private List<VisualCrossingApiDto> getCitiesWeathers(List<VisualCrossingApiDto> cityWeathers, LocalDate currentDate) {
         List<VisualCrossingApiDto> dataList = new ArrayList<>();
 
         for (final var cityData : cityWeathers) {
@@ -75,31 +75,20 @@ public class WeatherService {
     }
 
     private String cityNameConversion(String cityName) {
-
-        /*try {
+        try {
             return cityRepository.findAll().stream()
-                    .filter(a -> ((a.getLat() + "," + a.getLon()).equals(cityName)) || a.getCityName().equals(cityName))
+                    .filter(city -> ((city.getLat() + "," + city.getLon()).equals(cityName)) || city.getCityName().equals(cityName))
                     .findFirst().orElseThrow(() -> new Throwable(NO_CITY_NAME_MATCH_EXCEPTION_MESSAGE)).getCityName();
         } catch (Throwable e) {
             throw new RuntimeException(e);
-        }*/
-
-        for (final var cityData : cityRepository.findAll()) {
-            var a = (cityData.getLat() + "," + cityData.getLon()).equals(cityName);
-            var b = cityData.getCityName().equals(cityName);
-            if (((cityData.getLat() + "," + cityData.getLon()).equals(cityName)) || cityData.getCityName().equals(cityName))
-            {
-                return cityData.getCityName();
-            }
         }
-        return null;
     }
 
     public void save(List<WeatherDbDto> response) {
         response.forEach(dbRepository::save);
     }
 
-    private List<VisualCrossingApiDto> getCitiesWeathersLambda(List<VisualCrossingApiDto> cityWeathers, LocalDate currentDate) {
+    public List<VisualCrossingApiDto> getCitiesWeathersLambda(List<VisualCrossingApiDto> cityWeathers, LocalDate currentDate) {
         List<VisualCrossingApiDto> dataList = new ArrayList<>();
 
         cityWeathers.stream()

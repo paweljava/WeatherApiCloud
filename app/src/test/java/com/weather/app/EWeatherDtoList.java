@@ -14,7 +14,7 @@ public class EWeatherDtoList {
     public static final Weather WEATHER_2 = new Weather(parse("2023-05-22"), 15, 13);
     public static final Weather WEATHER_3 = new Weather(parse("2023-05-23"), 14, 20);
     public static final Weather WEATHER_4 = new Weather(parse("2023-05-24"), 13, 3);
-    public static final Weather WEATHER_5 = new Weather(parse("2023-05-25"), 12, 20);
+    public static final Weather WEATHER_5 = new Weather(parse("2023-05-25"), 12, 15);
     public static final Weather WEATHER_6 = new Weather(parse("2023-05-26"), 11, 3);
     public static final Weather WEATHER_7 = new Weather(parse("2023-05-27"), 10, 20);
     public static final Weather WEATHER_8 = new Weather(parse("2023-05-28"), 9, 3);
@@ -30,7 +30,7 @@ public class EWeatherDtoList {
     public static final Weather WEATHER_22 = new Weather(parse("2023-05-22"), 2, 3);
     public static final Weather WEATHER_23 = new Weather(parse("2023-05-23"), 3, 20);
     public static final Weather WEATHER_24 = new Weather(parse("2023-05-24"), 4, 3);
-    public static final Weather WEATHER_25 = new Weather(parse("2023-05-25"), 25, 20);
+    public static final Weather WEATHER_25 = new Weather(parse("2023-05-25"), 25, 15);
     public static final Weather WEATHER_26 = new Weather(parse("2023-05-26"), 6, 3);
     public static final Weather WEATHER_27 = new Weather(parse("2023-05-27"), 7, 20);
     public static final Weather WEATHER_28 = new Weather(parse("2023-05-28"), 8, 3);
