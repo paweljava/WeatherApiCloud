@@ -21,13 +21,11 @@ dependencies {
     implementation 'org.codehaus.groovy:groovy-all:3.0.16'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.flywaydb:flyway-core:9.18.0'
-
     testImplementation 'org.projectlombok:lombok:1.18.26'
     testImplementation 'org.spockframework:spock-core:2.3-groovy-3.0'
     testImplementation 'org.spockframework:spock-spring:2.3-groovy-3.0'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation "com.github.tomakehurst:wiremock-jre8:2.35.0"
-
     annotationProcessor 'org.projectlombok:lombok:1.18.26'
     runtimeOnly 'com.h2database:h2'
     compileOnly 'org.projectlombok:lombok:1.18.26'

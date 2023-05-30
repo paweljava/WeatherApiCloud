@@ -43,37 +43,6 @@ public class WeatherService {
         return getCitiesWeathersLambda(response, date);
     }
 
-    // not in use
-    private List<VisualCrossingApiDto> getCitiesWeathers(List<VisualCrossingApiDto> cityWeathers, LocalDate currentDate) {
-        List<VisualCrossingApiDto> dataList = new ArrayList<>();
-
-        for (final var cityData : cityWeathers) {
-            final var cityName = cityNameConversion(cityData.cityName());
-            for (final var weatherData : cityData.days()) {
-                if ((weatherData.forecastDate().equals(currentDate)) &&
-                        (validateWeatherConditions(weatherData.averageTemp(), weatherData.windSpeed()))) {
-                    final var newWeatherData = new Weather(
-                            weatherData.forecastDate(),
-                            weatherData.averageTemp(),
-                            weatherData.windSpeed());
-                    List<Weather> weatherList = new ArrayList<>();
-                    weatherList.add(newWeatherData);
-
-                    var newCityData = new VisualCrossingApiDto(cityName, weatherList);
-                    dataList.add(newCityData);
-                }
-            }
-        }
-        checkThat(dataList.size() > 0, CITY_NOT_FOUND_FOR_REQUESTED_WEATHER_CONDITIONS_EXCEPTION_MESSAGE);
-        dataList.sort(comparingDouble((VisualCrossingApiDto cityData) ->
-                cityData.days().stream()
-                        .mapToDouble(weather -> (weather.averageTemp() + weather.windSpeed() * 3))
-                        .average()
-                        .orElse(0))
-                .reversed());
-        return dataList;
-    }
-
     private String cityNameConversion(String cityName) {
         try {
             return cityRepository.findAll().stream()

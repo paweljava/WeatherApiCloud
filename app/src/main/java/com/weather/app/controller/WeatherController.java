@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -18,9 +19,11 @@ import static com.weather.web.client.utility.Checks.checkThat;
 @RestController
 class WeatherController {
     private final WeatherService weatherService;
+    private final Clock clock;
 
-    public WeatherController(WeatherService weatherService) {
+    public WeatherController(WeatherService weatherService, Clock clock) {
         this.weatherService = weatherService;
+        this.clock = clock;
     }
 
     @GetMapping("/weather/{date}")
@@ -34,7 +37,7 @@ class WeatherController {
     }
 
     private boolean validateDate(LocalDate date) {
-        final var today = LocalDate.now().minusDays(1);
+        final var today = LocalDate.now(clock).minusDays(1);
         final var date16DaysAhead = today.plusDays(16);
         return date.isAfter(today) && date.isBefore(date16DaysAhead);
     }

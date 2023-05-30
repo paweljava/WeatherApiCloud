@@ -25,7 +25,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
-//@WireMockTest(httpPort = 9090)
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 class WeatherRestApiIntegrationTestMockMvc {
@@ -41,7 +40,7 @@ class WeatherRestApiIntegrationTestMockMvc {
 
     private static final WireMockServer WIRE_MOCK_SERVER = new WireMockServer(9090);
 
-    private final LocalDate date = LocalDate.parse("2023-05-25");
+    private final LocalDate date = LocalDate.parse("2023-05-30");
 
     @BeforeAll
     public static void startServer() {
@@ -54,17 +53,9 @@ class WeatherRestApiIntegrationTestMockMvc {
     void should_get_best_weather_conditions() throws Exception {
         // given
         // Jastarnia
-        stubFor(WireMock.get(urlPathEqualTo("/VisualCrossingWebServices/rest/services/timeline/54.7007,18.67"))
-                .withQueryParam("key", equalTo(API_KEY))
-                .willReturn(aResponse()
-                        .withHeader("Content-Type", "application/json")
-                        .withBodyFile("json/jastarnia-response.json")));
+        stubJastarnia();
         // Bridgetown
-        stubFor(WireMock.get(urlPathEqualTo("/VisualCrossingWebServices/rest/services/timeline/13.112,-59.6127"))
-                .withQueryParam("key", equalTo(API_KEY))
-                .willReturn(aResponse()
-                        .withHeader("Content-Type", "application/json")
-                        .withBodyFile("json/bridgetown-response.json")));
+        stubBridgetown();
 
         // Fortaleza
         stubFor(WireMock.get(urlPathEqualTo("/VisualCrossingWebServices/rest/services/timeline/-3.71841,-38.5429"))
@@ -87,13 +78,6 @@ class WeatherRestApiIntegrationTestMockMvc {
                         .withHeader("Content-Type", "application/json")
                         .withBodyFile("json/lemorne-response.json")));
 
-        /*stubFor(WireMock.get(urlPathEqualTo("/VisualCrossingWebServices/rest/services/timeline"))
-                .withQueryParam("lat", equalTo(String.valueOf(-20.1654)))
-                .withQueryParam("lon", equalTo(String.valueOf(57.5149)))
-                .withQueryParam("key", equalTo(API_KEY))
-                .willReturn(aResponse()
-                        .withHeader("Content-Type", "application/json")
-                        .withBodyFile("json/pissoúri-response.json")));*/
 
         // when
         final var mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/weather/" + date))
@@ -108,5 +92,21 @@ class WeatherRestApiIntegrationTestMockMvc {
         assertEquals("Le Morne", response.get(0).cityName());
         assertEquals(24.6, response.get(0).weatherDtoList().get(0).averageTemp());
         assertEquals(32.4, response.get(0).weatherDtoList().get(0).windSpeed());
+    }
+
+    private static void stubBridgetown() {
+        stubFor(WireMock.get(urlPathEqualTo("/VisualCrossingWebServices/rest/services/timeline/13.112,-59.6127"))
+                .withQueryParam("key", equalTo(API_KEY))
+                .willReturn(aResponse()
+                        .withHeader("Content-Type", "application/json")
+                        .withBodyFile("json/bridgetown-response.json")));
+    }
+
+    private static void stubJastarnia() {
+        stubFor(WireMock.get(urlPathEqualTo("/VisualCrossingWebServices/rest/services/timeline/54.7007,18.67"))
+                .withQueryParam("key", equalTo(API_KEY))
+                .willReturn(aResponse()
+                        .withHeader("Content-Type", "application/json")
+                        .withBodyFile("json/jastarnia-response.json")));
     }
 }
