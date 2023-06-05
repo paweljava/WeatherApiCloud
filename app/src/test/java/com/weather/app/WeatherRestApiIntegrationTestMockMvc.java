@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -27,6 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
+@ContextConfiguration(classes = TestConfig.class)
 class WeatherRestApiIntegrationTestMockMvc {
 
     @Value("${api_host}")
@@ -40,7 +42,7 @@ class WeatherRestApiIntegrationTestMockMvc {
 
     private static final WireMockServer WIRE_MOCK_SERVER = new WireMockServer(9090);
 
-    private final LocalDate date = LocalDate.parse("2023-05-30");
+    private final LocalDate date = LocalDate.now(new TestConfig().clock());
 
     @BeforeAll
     public static void startServer() {
@@ -52,32 +54,11 @@ class WeatherRestApiIntegrationTestMockMvc {
     @Test
     void should_get_best_weather_conditions() throws Exception {
         // given
-        // Jastarnia
         stubJastarnia();
-        // Bridgetown
         stubBridgetown();
-
-        // Fortaleza
-        stubFor(WireMock.get(urlPathEqualTo("/VisualCrossingWebServices/rest/services/timeline/-3.71841,-38.5429"))
-                .withQueryParam("key", equalTo(API_KEY))
-                .willReturn(aResponse()
-                        .withHeader("Content-Type", "application/json")
-                        .withBodyFile("json/fortelaza-response.json")));
-
-        // Pissoúri
-        stubFor(WireMock.get(urlPathEqualTo("/VisualCrossingWebServices/rest/services/timeline/34.667,32.7004"))
-                .withQueryParam("key", equalTo(API_KEY))
-                .willReturn(aResponse()
-                        .withHeader("Content-Type", "application/json")
-                        .withBodyFile("json/pissoúri-response.json")));
-
-        // Mauritius
-        stubFor(WireMock.get(urlPathEqualTo("/VisualCrossingWebServices/rest/services/timeline/-20.4697,57.3444"))
-                .withQueryParam("key", equalTo(API_KEY))
-                .willReturn(aResponse()
-                        .withHeader("Content-Type", "application/json")
-                        .withBodyFile("json/lemorne-response.json")));
-
+        stubFortaleza();
+        stubPissouri();
+        stubLemorne();
 
         // when
         final var mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/weather/" + date))
@@ -90,8 +71,8 @@ class WeatherRestApiIntegrationTestMockMvc {
                 .getContentAsString(UTF_8), WeatherControllerDto[].class));
 
         assertEquals("Le Morne", response.get(0).cityName());
-        assertEquals(24.6, response.get(0).weatherDtoList().get(0).averageTemp());
-        assertEquals(32.4, response.get(0).weatherDtoList().get(0).windSpeed());
+        assertEquals(24.5, response.get(0).weatherDtoList().get(0).averageTemp());
+        assertEquals(31.0, response.get(0).weatherDtoList().get(0).windSpeed());
     }
 
     private static void stubBridgetown() {
@@ -108,5 +89,29 @@ class WeatherRestApiIntegrationTestMockMvc {
                 .willReturn(aResponse()
                         .withHeader("Content-Type", "application/json")
                         .withBodyFile("json/jastarnia-response.json")));
+    }
+
+    private static void stubFortaleza() {
+        stubFor(WireMock.get(urlPathEqualTo("/VisualCrossingWebServices/rest/services/timeline/-3.71841,-38.5429"))
+                .withQueryParam("key", equalTo(API_KEY))
+                .willReturn(aResponse()
+                        .withHeader("Content-Type", "application/json")
+                        .withBodyFile("json/fortelaza-response.json")));
+    }
+
+    private static void stubPissouri() {
+        stubFor(WireMock.get(urlPathEqualTo("/VisualCrossingWebServices/rest/services/timeline/34.667,32.7004"))
+                .withQueryParam("key", equalTo(API_KEY))
+                .willReturn(aResponse()
+                        .withHeader("Content-Type", "application/json")
+                        .withBodyFile("json/pissoúri-response.json")));
+    }
+
+    private static void stubLemorne() {
+        stubFor(WireMock.get(urlPathEqualTo("/VisualCrossingWebServices/rest/services/timeline/-20.4697,57.3444"))
+                .withQueryParam("key", equalTo(API_KEY))
+                .willReturn(aResponse()
+                        .withHeader("Content-Type", "application/json")
+                        .withBodyFile("json/lemorne-response.json")));
     }
 }
